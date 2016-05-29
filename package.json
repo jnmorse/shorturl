@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node index",
-    "test": "mocha --recursive --compilers js:babel-core/register"
+    "dev": "nodemon index",
+    "test": "mocha --recursive"
   },
   "repository": {
     "type": "git",
@@ -27,17 +28,18 @@
   },
   "homepage": "https://github.com/jnmorse/shorturl#readme",
   "devDependencies": {
-    "babel-core": "^6.7.2",
-    "babel-eslint": "^5.0.0",
     "eslint": "^2.4.0",
-    "eslint-plugin-react": "^4.2.3",
     "expect": "^1.15.2",
     "mocha": "^2.4.5",
+    "nodemon": "^1.9.2",
     "supertest": "^1.2.0"
   },
   "dependencies": {
+    "cors": "^2.7.1",
     "dotenv": "^2.0.0",
     "express": "^4.13.4",
+    "lodash": "^4.13.1",
+    "mongoose": "^4.4.19",
     "redis": "^2.5.3"
   }
 }
