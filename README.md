@@ -3,6 +3,11 @@
 This project is to build a URL shortener as part of the [Free Code Camp][1]
 back-end course.
 
+## Demo
+
+https://fcc-shorturl.herokuapp.com/new/http://example.com
+https://fcc-shorturl.herokuapp.com/gmik
+
 ## License
 
 > The MIT License (MIT)
