@@ -17,6 +17,14 @@ var app = express()
 
 app.use(cors())
 
+app.use(function(req, res, next) {
+  if (req.path.match(/^\/favicon/)) {
+    return res.sendStatus(404)
+  }
+
+  next()
+})
+
 /**
  * Url Middleware
  *
