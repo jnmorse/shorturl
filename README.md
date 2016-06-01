@@ -5,9 +5,9 @@ back-end course.
 
 ## Demo
 
-https://fcc-shorturl.herokuapp.com/new/http://example.com
+https://fcc-shorturl.herokuapp.com/new/http://www.google.com
 
-https://fcc-shorturl.herokuapp.com/gmik
+https://fcc-shorturl.herokuapp.com/1sQ3mf
 
 ## License
 
