@@ -2,11 +2,6 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const urlSchema = new Schema({
-  base: {
-    type: Number,
-    unique: true,
-    required: true
-  },
   original: {
     type: String,
     unique: true,

@@ -4,10 +4,10 @@ const express = require('express')
 const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 const cors = require('cors')
-const _ = require('lodash')
 const Url = require('./models/urls')
 const urlMiddleware = require('./middleware/url-middleware')
 const rejectFavicon = require('./middleware/reject-favicon')
+const sh = require('shorthash')
 
 dotenv.config({
   silent: true
@@ -21,7 +21,7 @@ app.use(cors())
 
 app.use(rejectFavicon)
 
-app.get('/new/*', urlMiddleware(2), function(req, res) {
+app.get('/new/*', urlMiddleware(2), function(req, res, next) {
   Url.findOne({ original: req.url }, (error, existing) => {
     if (error) { return res.statusStatus(500) }
 
@@ -30,16 +30,16 @@ app.get('/new/*', urlMiddleware(2), function(req, res) {
     }
 
     else {
-      const base = _.random(8000, 800000)
-
       const url = new Url({
-        base: base,
-        original: req.url,
-        short: base.toString(36)
+        original: JSON.stringify(req.url),
+        short: sh.unique(req.url)
       })
 
-      url.save(function (error) {
-        if (error) { return res.statusStatus(500) }
+      url.save(function (err) {
+        if (err) {
+          res.sendStatus(500)
+          next(err)
+        }
 
         return res.send(url)
       })
@@ -66,6 +66,14 @@ app.get('/:short', function(req, res, next) {
 
 app.get('*', function(req, res) {
   res.sendStatus(404)
+})
+
+app.use((err, req, res, next) => {
+  if (err) {
+    console.log(error)
+
+    next()
+  }
 })
 
 module.exports = app
