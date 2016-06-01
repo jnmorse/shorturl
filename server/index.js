@@ -22,9 +22,11 @@ app.use(cors())
 app.use(rejectFavicon)
 
 app.get('/new/*', urlMiddleware(2), function(req, res) {
-  Url.findOne({ original: req.url }, (error, exiting) => {
-    if (!error) {
-      return res.send(exiting)
+  Url.findOne({ original: req.url }, (error, existing) => {
+    if (error) { return res.statusStatus(500) }
+
+    else if (existing) {
+      return res.send(existing)
     }
 
     else {
@@ -37,8 +39,8 @@ app.get('/new/*', urlMiddleware(2), function(req, res) {
       })
 
       url.save(function (error) {
-        if (error) { return res.status(400).send('Already Exists') }
-        
+        if (error) { return res.statusStatus(500) }
+
         return res.send(url)
       })
     }
