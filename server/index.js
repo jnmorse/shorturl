@@ -6,6 +6,8 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const _ = require('lodash')
 const Url = require('./models/urls')
+const urlMiddleware = require('./middleware/url-middleware')
+const rejectFavicon = require('./middleware/reject-favicon')
 
 dotenv.config({
   silent: true
@@ -17,36 +19,7 @@ var app = express()
 
 app.use(cors())
 
-app.use(function(req, res, next) {
-  if (req.path.match(/^\/favicon/)) {
-    return res.sendStatus(404)
-  }
-
-  next()
-})
-
-/**
- * Url Middleware
- *
- * For removing base path from the url request
- * @param  {number} remove  Number of items to remove from head
- * @return {function}       Middleware
- */
-function urlMiddleware(remove) {
-  if (typeof remove !== 'number' || remove < 0) {
-    remove = 0
-  }
-
-  return function(req, res, next) {
-    const url = req.path.split('/')
-
-    url.splice(0, remove)
-
-    req.url = url.join('/')
-
-    next()
-  }
-}
+app.use(rejectFavicon)
 
 app.get('/new/*', urlMiddleware(2), function(req, res) {
   const base = _.random(8000, 800000)
@@ -58,7 +31,7 @@ app.get('/new/*', urlMiddleware(2), function(req, res) {
   })
 
   url.save(function (error) {
-    if (error) { return res.sendStatus(500) }
+    if (error) { return res.status(400).send('Already Exists') }
 
     return res.send(url)
   })
