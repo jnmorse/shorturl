@@ -22,18 +22,26 @@ app.use(cors())
 app.use(rejectFavicon)
 
 app.get('/new/*', urlMiddleware(2), function(req, res) {
-  const base = _.random(8000, 800000)
+  Url.findOne({ original: req.url }, (error, exiting) => {
+    if (!error) {
+      return res.send(exiting)
+    }
 
-  const url = new Url({
-    base: base,
-    original: req.url,
-    short: base.toString(36)
-  })
+    else {
+      const base = _.random(8000, 800000)
 
-  url.save(function (error) {
-    if (error) { return res.status(400).send('Already Exists') }
+      const url = new Url({
+        base: base,
+        original: req.url,
+        short: base.toString(36)
+      })
 
-    return res.send(url)
+      url.save(function (error) {
+        if (error) { return res.status(400).send('Already Exists') }
+        
+        return res.send(url)
+      })
+    }
   })
 })
 
