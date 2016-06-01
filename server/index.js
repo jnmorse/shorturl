@@ -31,7 +31,7 @@ app.get('/new/*', urlMiddleware(2), function(req, res, next) {
 
     else {
       const url = new Url({
-        original: JSON.stringify(req.url),
+        original: req.url,
         short: sh.unique(req.url)
       })
 
@@ -58,6 +58,7 @@ app.get('/:short', function(req, res, next) {
           short: url.short
         })
       }
+      console.log(url)
 
       return res.redirect(url.original)
     })
