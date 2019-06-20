@@ -1,5 +1,4 @@
-'use strict'
-
-const validURL = url => url.match(/^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([/\w\.-]*)*\/?\??\S*$/)
+const validURL = url =>
+  url.match(/^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([/\w\.-]*)*\/?\??\S*$/)
 
 module.exports = validURL
