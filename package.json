@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "cors": "^2.7.1",
-    "dotenv": "^2.0.0",
+    "dotenv": "^8.0.0",
     "express": "^4.13.4",
     "mongoose": "^4.4.19",
     "shorthash": "0.0.2"
