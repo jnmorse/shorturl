@@ -1,4 +1,2 @@
-const validURL = url =>
-  url.match(/^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([/\w\.-]*)*\/?\??\S*$/)
-
-module.exports = validURL
+module.exports = url =>
+  url.match(/^(https?:\/\/)([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?\??\S*$/u)

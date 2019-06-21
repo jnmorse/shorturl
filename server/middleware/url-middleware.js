@@ -7,12 +7,8 @@ const validURL = require('../lib/valid-url')
  * @param  {number} remove  Number of items to remove from head
  * @return {function}       Middleware
  */
-function urlMiddleware(remove) {
-  if (typeof remove !== 'number' || remove < 0) {
-    remove = 0
-  }
-
-  return function(req, res, next) {
+module.exports = function urlMiddleware(remove = 0) {
+  return function middleware(req, res, next) {
     const url = req.url.split('/')
 
     url.splice(0, remove)
@@ -23,8 +19,6 @@ function urlMiddleware(remove) {
       return res.sendStatus(400)
     }
 
-    next()
+    return next()
   }
 }
-
-module.exports = urlMiddleware

@@ -20,33 +20,24 @@ app.use(cors())
 
 app.use(rejectFavicon)
 
-app.get('/new/*', urlMiddleware(2), function(req, res, next) {
-  Url.findOne({ original: req.url }, (error, existing) => {
-    if (error) {
-      return res.statusStatus(500)
-    } else if (existing) {
-      return res.send(existing)
-    }
+app.get('/new/*', urlMiddleware(2), async (req, res) => {
+  const existing = await Url.findOne({ original: req.url })
 
-    const url = new Url({
-      original: req.url,
-      short: sh.unique(req.url)
-    })
+  if (existing) {
+    res.json(existing)
+  }
 
-    url.save(function(err) {
-      if (err) {
-        res.sendStatus(500)
-        next(err)
-      }
+  const url = await new Url({
+    original: req.url,
+    short: sh.unique(req.url)
+  }).save()
 
-      return res.send(url)
-    })
-  })
+  res.json(url)
 })
 
-app.get('/:short', function(req, res, next) {
+app.get('/:short', (req, res, next) => {
   if (req.params.short) {
-    Url.findOne({ short: req.params.short }, function(error, url) {
+    Url.findOne({ short: req.params.short }, (error, url) => {
       if (error) {
         return next(error)
       }
@@ -57,19 +48,19 @@ app.get('/:short', function(req, res, next) {
           short: url.short
         })
       }
-      console.log(url)
 
       return res.redirect(url.original)
     })
   }
 })
 
-app.get('*', function(req, res) {
+app.get('*', (req, res) => {
   res.sendStatus(404)
 })
 
-app.use((err, req, res, next) => {
-  if (err) {
+app.use((error, req, res, next) => {
+  if (error) {
+    // eslint-disable-next-line no-console
     console.log(error)
 
     next()
