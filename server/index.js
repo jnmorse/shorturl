@@ -12,7 +12,10 @@ dotenv.config({
 })
 
 mongoose.Promise = global.Promise
-mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true })
+mongoose.connect(process.env.MONGODB_URL, {
+  useNewUrlParser: true,
+  useCreateIndex: true
+})
 
 const app = express()
 
@@ -24,7 +27,7 @@ app.get('/new/*', urlMiddleware(2), async (req, res) => {
   const existing = await Url.findOne({ original: req.url })
 
   if (existing) {
-    res.json(existing)
+    return res.json(existing)
   }
 
   const url = await new Url({
@@ -32,7 +35,7 @@ app.get('/new/*', urlMiddleware(2), async (req, res) => {
     short: sh.unique(req.url)
   }).save()
 
-  res.json(url)
+  return res.json(url)
 })
 
 app.get('/:short', (req, res, next) => {
