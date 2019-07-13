@@ -1,73 +1,84 @@
-const express = require('express')
-const dotenv = require('dotenv')
-const mongoose = require('mongoose')
-const cors = require('cors')
-const Url = require('./models/urls')
-const urlMiddleware = require('./middleware/url-middleware')
-const rejectFavicon = require('./middleware/reject-favicon')
-const sh = require('shorthash')
+const express = require('express');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const Url = require('./models/urls');
+const urlMiddleware = require('./middleware/url-middleware');
+const rejectFavicon = require('./middleware/reject-favicon');
+const sh = require('shorthash');
 
 dotenv.config({
   silent: true
-})
+});
 
-mongoose.Promise = global.Promise
-mongoose.connect(process.env.MONGODB_URL, {
-  useNewUrlParser: true,
-  useCreateIndex: true
-})
+mongoose.Promise = global.Promise;
+mongoose
+  .connect(process.env.MONGODB_URL, {
+    useNewUrlParser: true,
+    useCreateIndex: true
+  })
+  // eslint-disable-next-line no-console
+  .catch(error => console.dir(error.message));
 
-const app = express()
+const app = express();
 
-app.use(cors())
+app.use(cors());
 
-app.use(rejectFavicon)
+app.use(rejectFavicon);
 
-app.get('/new/*', urlMiddleware(2), async (req, res) => {
-  const existing = await Url.findOne({ original: req.url })
+app.get('/new/*', urlMiddleware(2), async (req, res, next) => {
+  let existing;
+
+  try {
+    existing = await Url.findOne({ original: req.url });
+  } catch (error) {
+    next(error.message);
+  }
 
   if (existing) {
-    return res.json(existing)
+    return res.json(existing);
   }
 
   const url = await new Url({
     original: req.url,
     short: sh.unique(req.url)
-  }).save()
+  }).save();
 
-  return res.json(url)
-})
+  const verifyUrl = await Url.findOne({ original: req.url });
 
-app.get('/:short', (req, res, next) => {
-  if (req.params.short) {
-    Url.findOne({ short: req.params.short }, (error, url) => {
-      if (error) {
-        return next(error)
-      }
-
-      if (req.xhr) {
-        return res.json({
-          oringal: url.original,
-          short: url.short
-        })
-      }
-
-      return res.redirect(url.original)
-    })
+  if (verifyUrl === req.url) {
+    return res.json(url);
   }
-})
+
+  return next('url was not saved');
+});
+
+app.get('/:short', async (req, res, next) => {
+  const { short } = req.params;
+
+  if (short) {
+    const url = await Url.findOne({ short });
+
+    if (url) {
+      return res.redirect(url.original);
+    }
+
+    return next('url does not exist');
+  }
+
+  return next('short url not provided');
+});
 
 app.get('*', (req, res) => {
-  res.sendStatus(404)
-})
+  res.sendStatus(404);
+});
 
 app.use((error, req, res, next) => {
   if (error) {
-    // eslint-disable-next-line no-console
-    console.log(error)
-
-    next()
+    return res.status(500).send(error);
   }
-})
 
-module.exports = app
+  return next();
+});
+
+module.exports = app;

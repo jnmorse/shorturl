@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const { Schema } = mongoose
+const { Schema } = mongoose;
 
 const urlSchema = new Schema({
   original: {
@@ -14,6 +14,6 @@ const urlSchema = new Schema({
     unique: true,
     required: true
   }
-})
+});
 
-module.exports = mongoose.model('url', urlSchema)
+module.exports = mongoose.model('url', urlSchema);
