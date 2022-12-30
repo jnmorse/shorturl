@@ -32,7 +32,7 @@
     "eslint": "^6.0.1",
     "eslint-config-jnmorse": "^2.5.0",
     "expect": "^24.8.0",
-    "mocha": "^6.1.4",
+    "mocha": "^10.2.0",
     "nodemon": "^1.9.2",
     "supertest": "^4.0.2"
   },
